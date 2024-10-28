@@ -23,6 +23,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+
     public AuthenticationResponse register(RegisterRequest request) {
 
         if (request.getEmail() == null || request.getEmail().isEmpty() ||
@@ -40,16 +41,24 @@ public class AuthenticationService {
             throw new CustomException("Email inválido");
         }
 
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new CustomException("Usuário já registrado com este email");
+        }
+
 
         var user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
-                .user_password(passwordEncoder.encode(request.getPassword()))
+                .userPassword(passwordEncoder.encode(request.getPassword()))
                 .build();
 
+
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user.getUsername());
-        return AuthenticationResponse.builder().token(jwtToken).username(user.getUsername()).build();
+        var jwtToken = jwtService.generateToken(user.getUserId(),user.getUsername(), user.getEmail());
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .username(user.getUsername())
+                .build();
     }
 
     public AuthenticationResponse login(LoginRequest request) {
@@ -64,7 +73,7 @@ public class AuthenticationService {
             throw new CustomException("Email ou senha inválidos");
             }
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        var jwtToken = jwtService.generateToken(user.getUsername());
+        var jwtToken = jwtService.generateToken(user.getUserId(), user.getUsername(),user.getEmail());
         return AuthenticationResponse.builder().token(jwtToken).username(user.getUsername()).build();
     }
 }

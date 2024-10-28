@@ -2,11 +2,7 @@ package com.example.cortex.model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.mapping.PrimaryKey;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,15 +18,16 @@ import java.util.List;
 @Table(name="users", schema = "cortex_db")
 
 public class User implements UserDetails {
+    @Getter
     @Id
-    @GeneratedValue
-    private Integer user_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer userId;
 
     private String email;
 
     private String username;
 
-    private String user_password;
+    private String userPassword;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -39,14 +36,13 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user_password;
+        return userPassword;
     }
 
     @Override
     public String getUsername() {
         return username;
     }
-
 
     @Override
     public boolean isAccountNonExpired() {
