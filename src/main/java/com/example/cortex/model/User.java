@@ -29,6 +29,9 @@ public class User implements UserDetails {
 
     private String userPassword;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ProjectUser> projectUsers;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));

@@ -1,6 +1,6 @@
 package com.example.cortex.errors;
 
-import com.example.cortex.dto.ErrorResponse;
+import com.example.cortex.dto.response.ErrorResponse;
 import com.example.cortex.exception.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

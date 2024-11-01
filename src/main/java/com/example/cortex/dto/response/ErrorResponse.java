@@ -1,4 +1,4 @@
-package com.example.cortex.dto;
+package com.example.cortex.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

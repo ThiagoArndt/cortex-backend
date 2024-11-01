@@ -1,6 +1,8 @@
 package com.example.cortex.controller;
 
+
 import com.example.cortex.dto.ProjectDTO;
+import com.example.cortex.dto.UserDTO;
 import com.example.cortex.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +31,26 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getProject(id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ProjectDTO> updateProject(@PathVariable Integer id, @RequestBody ProjectDTO projectDTO) {
+        return ResponseEntity.ok(projectService.updateProject(id, projectDTO));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Integer id) {
         projectService.deleteProject(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/users")
+    public ResponseEntity<List<UserDTO>> getUsersByProjectId(@PathVariable Integer id) {
+        List<UserDTO> users = projectService.getUsersByProjectId(id);
+        return ResponseEntity.ok(users);
+    }
+
+    @PostMapping("/exit/{id}")
+    public ResponseEntity<Void> exitProject(@PathVariable Integer id) {
+        projectService.exitProject(id);
         return ResponseEntity.noContent().build();
     }
 

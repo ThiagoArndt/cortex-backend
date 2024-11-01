@@ -2,6 +2,7 @@ package com.example.cortex.service;
 
 import com.example.cortex.dto.TaskDTO;
 import com.example.cortex.exception.CustomException;
+import com.example.cortex.mappers.TaskMapper;
 import com.example.cortex.model.Group;
 import com.example.cortex.model.Task;
 import com.example.cortex.model.User;
@@ -18,11 +19,13 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final GroupService groupService;
     private final UserRepository userRepository;
+    private final TaskMapper taskMapper; // Injecting TaskMapper
 
     public TaskDTO createTask(TaskDTO taskDTO) {
         Group group = groupService.getGroupById(taskDTO.getGroupId());
+
         User assignedUser = taskDTO.getAssignedTo() != null ?
-                userRepository.findById(taskDTO.getAssignedTo())
+                userRepository.findById(taskDTO.getAssignedTo().getUserId())
                         .orElseThrow(() -> new CustomException("Usuário atribuido não encontrado")) : null;
 
         Task task = Task.builder()
@@ -34,13 +37,13 @@ public class TaskService {
                 .build();
 
         task = taskRepository.save(task);
-        return mapToDTO(task);
+        return taskMapper.taskToTaskDTO(task);
     }
 
     public List<TaskDTO> getGroupTasks(Integer groupId) {
         return taskRepository.findByGroup_groupId(groupId)
                 .stream()
-                .map(this::mapToDTO)
+                .map(taskMapper::taskToTaskDTO)
                 .collect(Collectors.toList());
     }
 
@@ -48,7 +51,7 @@ public class TaskService {
         Task task = getTaskById(id);
 
         if (taskDTO.getAssignedTo() != null) {
-            User assignedUser = userRepository.findById(taskDTO.getAssignedTo())
+            User assignedUser = userRepository.findById(taskDTO.getAssignedTo().getUserId())
                     .orElseThrow(() -> new CustomException("Usuário atribuido não encontrado"));
             task.setAssignedTo(assignedUser);
         }
@@ -56,9 +59,10 @@ public class TaskService {
         task.setTaskName(taskDTO.getTaskName());
         task.setStatus(taskDTO.getStatus());
         task.setDueDate(taskDTO.getDueDate());
+        task.setGroup(groupService.getGroupById(taskDTO.getGroupId()));
 
         task = taskRepository.save(task);
-        return mapToDTO(task);
+        return taskMapper.taskToTaskDTO(task);
     }
 
     public void deleteTask(Integer id) {
@@ -71,14 +75,5 @@ public class TaskService {
                 .orElseThrow(() -> new CustomException("Tarefa não encontrada"));
     }
 
-    private TaskDTO mapToDTO(Task task) {
-        return TaskDTO.builder()
-                .taskId(task.getTaskId())
-                .taskName(task.getTaskName())
-                .groupId(task.getGroup().getGroupId())
-                .assignedTo(task.getAssignedTo() != null ? task.getAssignedTo().getUserId() : null)
-                .status(task.getStatus())
-                .dueDate(task.getDueDate())
-                .build();
-    }
+
 }

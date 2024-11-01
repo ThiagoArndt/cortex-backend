@@ -26,5 +26,9 @@ public class Project {
     private List<ProjectUser> projectUsers;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<ProjectUser> users;
+
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Group> groups;
 }

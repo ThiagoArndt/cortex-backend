@@ -1,8 +1,8 @@
 package com.example.cortex.controller;
 
-import com.example.cortex.dto.AuthenticationResponse;
-import com.example.cortex.dto.LoginRequest;
-import com.example.cortex.dto.RegisterRequest;
+import com.example.cortex.dto.response.AuthenticationResponse;
+import com.example.cortex.dto.request.LoginRequest;
+import com.example.cortex.dto.request.RegisterRequest;
 import com.example.cortex.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

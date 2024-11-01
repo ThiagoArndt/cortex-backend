@@ -25,7 +25,7 @@ public class JwtService {
 
     public String generateInvitationToken(String email, Integer projectId) {
         return JWT.create()
-                .withSubject(email)
+                .withClaim("email",email)
                 .withClaim("projectId", projectId)
                 .withClaim("type", "invitation")
                 .withIssuedAt(new Date())

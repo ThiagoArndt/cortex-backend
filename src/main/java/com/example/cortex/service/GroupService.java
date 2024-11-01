@@ -4,6 +4,7 @@ import com.example.cortex.dto.GroupDTO;
 import com.example.cortex.exception.CustomException;
 import com.example.cortex.model.Group;
 import com.example.cortex.model.Project;
+import com.example.cortex.model.User;
 import com.example.cortex.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,17 @@ public class GroupService {
         groupRepository.delete(group);
     }
 
+    public GroupDTO updateGroup(Integer id, GroupDTO groupDTO) {
+        Group group = getGroupById(id);
+
+        group.setGroupName (groupDTO.getGroupName());
+
+        group = groupRepository.save(group);
+        return mapToDTO(group);
+    }
+
     protected Group getGroupById(Integer id) {
+
         return groupRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Grupo não encontrado"));
     }
@@ -54,5 +65,7 @@ public class GroupService {
                 .projectId(group.getProject().getProjectId())
                 .build();
     }
+
+
 }
 

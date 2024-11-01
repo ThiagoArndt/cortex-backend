@@ -24,6 +24,11 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getProjectGroups(projectId));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<GroupDTO> updateGroup(@PathVariable Integer id, @RequestBody GroupDTO groupDTO) {
+        return ResponseEntity.ok(groupService.updateGroup(id, groupDTO));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGroup(@PathVariable Integer id) {
         groupService.deleteGroup(id);

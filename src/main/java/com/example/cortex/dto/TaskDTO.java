@@ -1,6 +1,7 @@
 package com.example.cortex.dto;
 
 import com.example.cortex.model.TaskStatus;
+import com.example.cortex.model.User;
 import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ public class TaskDTO {
     private Integer taskId;
     private String taskName;
     private Integer groupId;
-    private Integer assignedTo;
+    private User assignedTo;
     private TaskStatus status;
     private LocalDate dueDate;
 }

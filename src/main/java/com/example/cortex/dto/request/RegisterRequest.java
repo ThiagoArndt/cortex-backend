@@ -1,4 +1,4 @@
-package com.example.cortex.dto;
+package com.example.cortex.dto.request;
 
 import lombok.*;
 
