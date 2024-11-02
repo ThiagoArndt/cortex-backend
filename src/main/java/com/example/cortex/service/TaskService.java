@@ -1,6 +1,7 @@
 package com.example.cortex.service;
 
-import com.example.cortex.dto.TaskDTO;
+import com.example.cortex.dto.request.TaskRequest;
+import com.example.cortex.dto.response.TaskResponse;
 import com.example.cortex.exception.CustomException;
 import com.example.cortex.mappers.TaskMapper;
 import com.example.cortex.model.Group;
@@ -21,48 +22,51 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TaskMapper taskMapper; // Injecting TaskMapper
 
-    public TaskDTO createTask(TaskDTO taskDTO) {
+    public TaskResponse createTask(TaskRequest taskDTO) {
         Group group = groupService.getGroupById(taskDTO.getGroupId());
-
-        User assignedUser = taskDTO.getAssignedTo() != null ?
-                userRepository.findById(taskDTO.getAssignedTo().getUserId())
-                        .orElseThrow(() -> new CustomException("Usuário atribuido não encontrado")) : null;
 
         Task task = Task.builder()
                 .taskName(taskDTO.getTaskName())
                 .group(group)
-                .assignedTo(assignedUser)
+                .assignedTo(null)
                 .status(taskDTO.getStatus())
                 .dueDate(taskDTO.getDueDate())
                 .build();
 
         task = taskRepository.save(task);
-        return taskMapper.taskToTaskDTO(task);
+        return taskMapper.taskToTaskResponse(task);
     }
 
-    public List<TaskDTO> getGroupTasks(Integer groupId) {
-        return taskRepository.findByGroup_groupId(groupId)
-                .stream()
-                .map(taskMapper::taskToTaskDTO)
+    public List<TaskResponse> getGroupTasks(Integer groupId) {
+        List<Task> tasks = taskRepository.findByGroup_groupIdWithAssignedUser(groupId);
+
+
+
+        return tasks.stream()
+                .map(taskMapper::taskToTaskResponse)
                 .collect(Collectors.toList());
     }
 
-    public TaskDTO updateTask(Integer id, TaskDTO taskDTO) {
-        Task task = getTaskById(id);
 
-        if (taskDTO.getAssignedTo() != null) {
-            User assignedUser = userRepository.findById(taskDTO.getAssignedTo().getUserId())
+    public TaskResponse updateTask(Integer id, TaskRequest taskDTO) {
+        Task task = getTaskById(id);
+        User assignedUser = null;
+
+        if(taskDTO.getAssignedTo() != null){
+            assignedUser = userRepository.findById(taskDTO.getAssignedTo())
                     .orElseThrow(() -> new CustomException("Usuário atribuido não encontrado"));
-            task.setAssignedTo(assignedUser);
         }
 
+
+
+        task.setAssignedTo(assignedUser);
         task.setTaskName(taskDTO.getTaskName());
         task.setStatus(taskDTO.getStatus());
         task.setDueDate(taskDTO.getDueDate());
         task.setGroup(groupService.getGroupById(taskDTO.getGroupId()));
 
         task = taskRepository.save(task);
-        return taskMapper.taskToTaskDTO(task);
+        return taskMapper.taskToTaskResponse(task);
     }
 
     public void deleteTask(Integer id) {

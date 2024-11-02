@@ -1,18 +1,19 @@
-package com.example.cortex.dto;
+package com.example.cortex.dto.response;
 
+import com.example.cortex.dto.UserDTO;
 import com.example.cortex.model.TaskStatus;
-import com.example.cortex.model.User;
 import lombok.Builder;
 import lombok.Data;
+
 import java.time.LocalDate;
 
 @Data
 @Builder
-public class TaskDTO {
+public class TaskResponse {
     private Integer taskId;
     private String taskName;
     private Integer groupId;
-    private User assignedTo;
+    private UserDTO assignedTo;
     private TaskStatus status;
     private LocalDate dueDate;
 }
