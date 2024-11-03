@@ -1,16 +1,22 @@
 package com.example.cortex.service;
 
+import com.example.cortex.dto.CommentDTO;
 import com.example.cortex.dto.request.TaskRequest;
 import com.example.cortex.dto.response.TaskResponse;
 import com.example.cortex.exception.CustomException;
+import com.example.cortex.mappers.CommentMapper;
 import com.example.cortex.mappers.TaskMapper;
+import com.example.cortex.model.Comment;
 import com.example.cortex.model.Group;
 import com.example.cortex.model.Task;
 import com.example.cortex.model.User;
+import com.example.cortex.repository.CommentRepository;
 import com.example.cortex.repository.TaskRepository;
 import com.example.cortex.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +26,11 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final GroupService groupService;
     private final UserRepository userRepository;
-    private final TaskMapper taskMapper; // Injecting TaskMapper
+    private final TaskMapper taskMapper;
+    private final CommentMapper commentMapper;
+    private final UserService userService;
+    private final CommentRepository commentRepository;
+
 
     public TaskResponse createTask(TaskRequest taskDTO) {
         Group group = groupService.getGroupById(taskDTO.getGroupId());
@@ -78,6 +88,7 @@ public class TaskService {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Tarefa não encontrada"));
     }
+
 
 
 }
